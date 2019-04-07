@@ -1,6 +1,12 @@
 ### Libraries
 install.packages("fread")
 install.packages("R.utils")
+install.packages("devtools")
+remove.packages("devtools")
+library(devtools)
+devtools::install_github("airbnb/Rbnb")
+
+library(Rbnb)
 library(data.table)
 library(R.utils)
 ### Data Import
@@ -18,5 +24,8 @@ df$price <- as.numeric(gsub(",","",df$price))
 df$security_deposit <- gsub("\\$", "", df$security_deposit)
 df$security_deposit <- as.numeric(gsub(",","",df$security_deposit))
 df$security_deposit <- ifelse(is.na(df$security_deposit), 0, df$security_deposit)
+df$cleaning_fee <- gsub("\\$", "", df$cleaning_fee)
+df$cleaning_fee <- as.numeric(gsub(",","",df$cleaning_fee))
+df$cleaning_fee <- ifelse(is.na(df$cleaning_fee), 0, df$cleaning_fee)
 ### 
 
