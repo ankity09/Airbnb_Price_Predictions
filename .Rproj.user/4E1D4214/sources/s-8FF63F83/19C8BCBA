@@ -1,0 +1,23 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1555307898808.000,
+    "dirty" : true,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "0",
+    "id" : "19C8BCBA",
+    "lastKnownWriteTime" : 1555307950,
+    "last_content_update" : 1555311567291,
+    "path" : "~/Documents/GitHub/Airbnb_Price_Predictions/vis_nyc.R",
+    "project_path" : "vis_nyc.R",
+    "properties" : {
+        "cursorPosition" : "98,23",
+        "scrollLine" : "85",
+        "tempName" : "Untitled1"
+    },
+    "relative_order" : 2,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}

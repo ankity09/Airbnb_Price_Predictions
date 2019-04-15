@@ -1,0 +1,9 @@
+{
+    "path" : "~/Documents/GitHub/Airbnb_Price_Predictions",
+    "sortOrder" : [
+        {
+            "ascending" : true,
+            "columnIndex" : 2
+        }
+    ]
+}
