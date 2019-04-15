@@ -16,7 +16,7 @@ install.packages("extracat")
 install.packages("gridExtra")
 
 library(devtools)
-install_github('arilamstein/choroplethrZip@v1.5.0')
+#install_github('arilamstein/choroplethrZip@v1.5.0')
 library(choroplethr)
 library(choroplethrMaps)
 library(choroplethrZip)
@@ -36,139 +36,102 @@ library(tidyverse)
 library(R.utils)
 ### Data Import
 
+jan18 <- read.csv("/Users/ankityadav/Desktop/Spring_2019/DMPA/Project/Data/January_2018/listings.csv", stringsAsFactors = F)
+feb18 <- read.csv("/Users/ankityadav/Desktop/Spring_2019/DMPA/Project/Data/February_2018/listings.csv", stringsAsFactors = F)
+mar18 <- read.csv("/Users/ankityadav/Desktop/Spring_2019/DMPA/Project/Data/March_2018/listings.csv", stringsAsFactors = F)
 apr18 <- read.csv("/Users/ankityadav/Desktop/Spring_2019/DMPA/Project/Data/April_2018/listings.csv", stringsAsFactors = F)
-str(apr18)
+may18 <- read.csv("/Users/ankityadav/Desktop/Spring_2019/DMPA/Project/Data/May_2018/listings.csv", stringsAsFactors = F)
+jun18 <- read.csv("/Users/ankityadav/Desktop/Spring_2019/DMPA/Project/Data/June_2018/listings.csv", stringsAsFactors = F)
+jul18 <- read.csv("/Users/ankityadav/Desktop/Spring_2019/DMPA/Project/Data/July_2018/listings.csv", stringsAsFactors = F)
+aug18 <- read.csv("/Users/ankityadav/Desktop/Spring_2019/DMPA/Project/Data/August_2018/listings.csv", stringsAsFactors = F)
+sep18 <- read.csv("/Users/ankityadav/Desktop/Spring_2019/DMPA/Project/Data/September_2018/listings.csv", stringsAsFactors = F)
+oct18 <- read.csv("/Users/ankityadav/Desktop/Spring_2019/DMPA/Project/Data/October_2018/listings.csv", stringsAsFactors = F)
+nov18 <- read.csv("/Users/ankityadav/Desktop/Spring_2019/DMPA/Project/Data/November_2018/listings.csv", stringsAsFactors = F)
+dec18 <- read.csv("/Users/ankityadav/Desktop/Spring_2019/DMPA/Project/Data/December_2018/listings.csv", stringsAsFactors = F)
+jan19 <- read.csv("/Users/ankityadav/Desktop/Spring_2019/DMPA/Project/Data/January_2019/listings.csv", stringsAsFactors = F)
+feb19 <- read.csv("/Users/ankityadav/Desktop/Spring_2019/DMPA/Project/Data/February_2019/listings.csv", stringsAsFactors = F)
+mar19 <- read.csv("/Users/ankityadav/Desktop/Spring_2019/DMPA/Project/Data/March_2019/listings.csv", stringsAsFactors = F)
 
-framenames <- c('jan18','feb18','mar18','apr18','may18','jun18','jul18','aug18','sep18','oct18','nov18','dec18','jan19','feb19','mar19')
-df <- apr18
-df <- df[,c(1,5,22:23,26:29,32:35,37,39:42,44,49:69,71:75,77,80:86,90:92,94:96)]
+data <- data.frame("Names" = c('jan18','feb18','mar18','apr18'))
+framenames <- c('jan18','feb18','mar18','apr18')
+#framenames <- c('jan18','feb18','mar18','apr18','may18','jun18','jul18','aug18','sep18','oct18','nov18','dec18','jan19','feb19','mar19')
 
 
 ### removing dollar and comma ###
-df$extra_people <- as.numeric(gsub("\\$", "", df$extra_people))
-df$price <- gsub("\\$", "", df$price)
-df$price <- as.numeric(gsub(",","",df$price))
-df$security_deposit <- gsub("\\$", "", df$security_deposit)
-df$security_deposit <- as.numeric(gsub(",","",df$security_deposit))
-df$security_deposit <- ifelse(is.na(df$security_deposit), 0, df$security_deposit)
-df$cleaning_fee <- gsub("\\$", "", df$cleaning_fee)
-df$cleaning_fee <- as.numeric(gsub(",","",df$cleaning_fee))
-df$cleaning_fee <- ifelse(is.na(df$cleaning_fee), 0, df$cleaning_fee)
-df$host_response_rate <- gsub("\\%", "", df$host_response_rate)
-df$host_response_rate <- as.numeric(df$host_response_rate)
-df$host_is_superhost <- as.numeric(factor(df$host_is_superhost, levels = c("f","t"))) - 1
-df$host_identity_verified <- as.numeric(factor(df$host_identity_verified, levels = c("f","t"))) - 1
-df$neighbourhood_group <- factor(df$neighbourhood_group)
-df$neighbourhood_group_cleansed <- factor(df$neighbourhood_group_cleansed)
-df$room_type <- factor(df$room_type)
-df$host_response_time <- factor(df$host_response_time, levels = c("N/A","within an hour", "within a few hours", "within a day","a few days or more"))
-df$has_availability <- as.numeric(factor(df$has_availability)) 
-df$property_type <- factor(df$property_type)
-df$bed_type <- factor(df$bed_type)
-df$weekly_price <- gsub("\\$", "", df$weekly_price)
-df$weekly_price <- as.numeric(gsub(",","",df$weekly_price))
-df$monthly_price <- gsub("\\$", "", df$monthly_price)
-df$monthly_price <- as.numeric(gsub(",","",df$monthly_price))
-df$minimum_nights <- as.numeric(df$minimum_nights)
-df$maximum_nights <- as.numeric(df$maximum_nights)
-df$neighbourhood <- factor(df$neighbourhood)
-df$neighbourhood_cleansed <- factor(df$neighbourhood_cleansed)
-df$host_verifications <- factor(df$host_verifications)
-df$zipcode <- factor(df$zipcode)
-df$host_neighbourhood <- factor(df$host_neighbourhood)
-df$host_since <- as.Date(df$host_since)
-df$host_listings_count <- as.numeric(df$host_listings_count)
-df$host_total_listings_count <- as.numeric(df$host_total_listings_count)
-df$accommodates <- as.numeric(df$accommodates)
-df$bathrooms <- as.numeric(df$bathrooms)
-df$bedrooms <- as.numeric(df$bedrooms)
-df$beds <- as.numeric(df$beds)
-df$guests_included <- as.numeric(df$guests_included)
-df$calculated_host_listings_count <- as.numeric(df$calculated_host_listings_count)
-df$is_location_exact <- as.numeric(factor(df$is_location_exact, levels = c("f","t"))) - 1
-df$is_location_exact <- as.factor(df$is_location_exact)
-df$cancellation_policy <- as.factor(df$cancellation_policy)
-df$require_guest_phone_verification <- as.numeric(factor(df$require_guest_phone_verification, levels = c("f","t"))) - 1
-df$require_guest_phone_verification <- as.factor(df$require_guest_phone_verification)
-df$is_business_travel_ready <- as.numeric(factor(df$is_business_travel_ready, levels = c("f","t"))) - 1
-df$is_business_travel_ready <- as.factor(df$is_business_travel_ready)
-df$instant_bookable <- as.numeric(factor(df$instant_bookable, levels = c("f","t"))) - 1
-df$instant_bookable <- as.factor(df$instant_bookable)
-
-###############
-
-leaflet(df) %>%
-  addTiles() %>%
-  addMarkers(~longitude, ~latitude,labelOptions = labelOptions(noHide = F),clusterOptions = markerClusterOptions(),popup = paste0("<b> Name: </b>", df$name , "<br/><b> Host Name: </b>", df$host_name, "<br> <b> Price: </b>", df$price, "<br/><b> Room Type: </b>", df$room_type, "<br/><b> Property Type: </b>", df$property_type
-  )) %>% 
-  setView(-74.00, 40.71, zoom = 12) %>%
-  addProviderTiles("CartoDB.Positron")
-
-zipPrices <- df %>% group_by(zipcode = zipcode) %>% summarise(avg_price = mean(price, na.rm = TRUE))
-colnames(zipPrices) <- c("region","value")
-zipPrices$region <- as.character(zipPrices$region)
-nyc_fips = c(36005, 36047, 36061, 36081, 36085)
-g_price_location <- zip_choropleth(zipPrices,
-                                   county_zoom = nyc_fips,
-                                   title = "Average Price by Region",
-                                   legend = "Average Score") + ggtitle("Which area is expensive?",
-                                                                       subtitle = "Map showing Average Price by Area") +
-  theme(plot.title = element_text(face = "bold")) +
-  theme(plot.subtitle = element_text(face = "bold", color = "grey35")) +
-  theme(plot.caption = element_text(color = "grey68"))+scale_color_gradient(low="#d3cbcb", high="#852eaa")+ scale_fill_brewer("Average Price",palette=4)
-g_price_location
-
-
-
-
-
-nyc_map <- get_map(c(left = -74.194098, bottom = 40.538857, right = -73.762397, top = 40.888809), maptype = "toner-lite")
-ggmap(nyc_map)
-
-listingsAnim<- df%>% 
-  mutate(join_year = year(host_since), join_month = month(host_since),
-         join_date = as.Date(paste(join_month, 1, join_year, sep = "/"), '%m/%d/%Y'))
-li_data_smry <- listingsAnim %>% 
-  count(join_year, join_month) %>% ungroup() %>%
-  arrange(join_year, join_month) %>%
-  mutate(cumm_n = cumsum(n))
-li_data_smry <- li_data_smry[complete.cases(li_data_smry), ]
-li_data_smry <- inner_join(li_data_smry, select(listingsAnim, zipcode, latitude, longitude, join_year, join_month, join_date), by = c("join_year" = "join_year", "join_month" = "join_month"))
-
-my_zip_plot <- function(df, plotdate, mapid){
-  # create the background map. using the darken argument to make the map filled with black color.
-  g <- ggmap(nyc_map, darken = c("0.8", "black")) 
-  # split the data frame for all Walmarts before a plot date i.e. a month
-  old_df <- filter(df, join_date < plotdate)
-  # split the data frame for all Walmarts for the plot date i.e. during a month
-  new_df <- filter(df, join_date == plotdate)
-  # plot all the Walmarts before the current opening month. Make all the older store locations as shown in circles smaller
-  g <- g + geom_point(data = old_df, aes(x = longitude, y = latitude), size = 2, color = "dodgerblue", alpha = 0.2)
-  #plot all the Walmarts during the current opening month. Make all the newer store locations as shown in circles bigger to get the "pop" effect
-  g <- g + geom_point(data = new_df, aes(x = longitude, y = latitude), size = 5, color = "dodgerblue", alpha = 0.2)
-  # remove axis marks, labels, and titles
-  g <- g + theme(axis.ticks = element_blank(), axis.title = element_blank(), axis.text = element_blank(), plot.title = element_blank())  
-  # place the label for year 
-  g <- g + annotate("text", x = -74.15, y = 40.85, label = "YEAR:", color = "white", size = rel(5), hjust = 0)
-  # place the value of for year 
-  g <- g + annotate("text", x = -74.15, y = 40.839, label = unique(new_df$join_year), color = "white", size = rel(6), fontface = 2, hjust = 0)
-  # place the label for stores opened  
-  g <- g + annotate("text", x = -74.15, y = 40.825, label = "LISTING COUNT:", color = "white", size = rel(5), hjust = 0)
-  # place cumulative store openings
-  g <- g + annotate("text", x = -74.15, y = 40.814, label = comma(unique(new_df$cumm_n)), color = "white", size = rel(6), fontface = 2, hjust = 0)
-  # generate the file name for the map. Using str_pad to make the filename same length and prefixed with zeroes. 
-  # create a maps directory inside the directory of this script.
-  filename <- paste0("maps/img_" , str_pad(mapid, 7, pad = "0"),  ".png")
-  #this saves the images created.
-  ggsave(filename = filename, plot = g, width = 13, height = 7, dpi = 150, device = "png")
+clean <- function(x){
+    df <- x
+    df <- df[,c(1,5,22:23,26:29,32:35,37,39:42,44,49:69,71:75,77,80:86,90:92,94:96)]  
+    df$extra_people <- as.numeric(gsub("\\$", "", df$extra_people))
+    df$price <- gsub("\\$", "", df$price)
+    df$price <- as.numeric(gsub(",","",df$price))
+    df$security_deposit <- gsub("\\$", "", df$security_deposit)
+    df$security_deposit <- as.numeric(gsub(",","",df$security_deposit))
+    df$security_deposit <- ifelse(is.na(df$security_deposit), 0, df$security_deposit)
+    df$cleaning_fee <- gsub("\\$", "", df$cleaning_fee)
+    df$cleaning_fee <- as.numeric(gsub(",","",df$cleaning_fee))
+    df$cleaning_fee <- ifelse(is.na(df$cleaning_fee), 0, df$cleaning_fee)
+    df$host_response_rate <- gsub("\\%", "", df$host_response_rate)
+    df$host_response_rate <- as.numeric(df$host_response_rate)
+    df$host_is_superhost <- as.numeric(factor(df$host_is_superhost, levels = c("f","t"))) - 1
+    df$host_identity_verified <- as.numeric(factor(df$host_identity_verified, levels = c("f","t"))) - 1
+    df$neighbourhood_group <- factor(df$neighbourhood_group)
+    df$neighbourhood_group_cleansed <- factor(df$neighbourhood_group_cleansed)
+    df$room_type <- factor(df$room_type)
+    df$host_response_time <- factor(df$host_response_time, levels = c("N/A","within an hour", "within a few hours", "within a day","a few days or more"))
+    df$has_availability <- as.numeric(factor(df$has_availability)) 
+    df$property_type <- factor(df$property_type)
+    df$bed_type <- factor(df$bed_type)
+    df$weekly_price <- gsub("\\$", "", df$weekly_price)
+    df$weekly_price <- as.numeric(gsub(",","",df$weekly_price))
+    df$monthly_price <- gsub("\\$", "", df$monthly_price)
+    df$monthly_price <- as.numeric(gsub(",","",df$monthly_price))
+    df$minimum_nights <- as.numeric(df$minimum_nights)
+    df$maximum_nights <- as.numeric(df$maximum_nights)
+    df$neighbourhood <- factor(df$neighbourhood)
+    df$neighbourhood_cleansed <- factor(df$neighbourhood_cleansed)
+    df$host_verifications <- factor(df$host_verifications)
+    df$zipcode <- factor(df$zipcode)
+    df$host_neighbourhood <- factor(df$host_neighbourhood)
+    df$host_since <- as.Date(df$host_since)
+    df$host_listings_count <- as.numeric(df$host_listings_count)
+    df$host_total_listings_count <- as.numeric(df$host_total_listings_count)
+    df$accommodates <- as.numeric(df$accommodates)
+    df$bathrooms <- as.numeric(df$bathrooms)
+    df$bedrooms <- as.numeric(df$bedrooms)
+    df$beds <- as.numeric(df$beds)
+    df$guests_included <- as.numeric(df$guests_included)
+    df$calculated_host_listings_count <- as.numeric(df$calculated_host_listings_count)
+    df$is_location_exact <- as.numeric(factor(df$is_location_exact, levels = c("f","t"))) - 1
+    df$is_location_exact <- as.factor(df$is_location_exact)
+    df$cancellation_policy <- as.factor(df$cancellation_policy)
+    df$require_guest_phone_verification <- as.numeric(factor(df$require_guest_phone_verification, levels = c("f","t"))) - 1
+    df$require_guest_phone_verification <- as.factor(df$require_guest_phone_verification)
+    df$is_business_travel_ready <- as.numeric(factor(df$is_business_travel_ready, levels = c("f","t"))) - 1
+    df$is_business_travel_ready <- as.factor(df$is_business_travel_ready)
+    df$instant_bookable <- as.numeric(factor(df$instant_bookable, levels = c("f","t"))) - 1
+    df$instant_bookable <- as.factor(df$instant_bookable)
+    x <- df
 }
 
-li_data_smry  %>%  
-  mutate(mapid = group_indices_(li_data_smry, .dots = 'join_date')) %>% 
-  group_by(join_date) %>% 
-  do(pl = my_zip_plot(li_data_smry, unique(.$join_date), unique(.$mapid)))
+jan18 <- clean(jan18)
+feb18 <- clean(feb18)
+mar18 <- clean(mar18)
+apr18 <- clean(apr18)
+may18 <- clean(may18)
+jun18 <- clean(jun18)
+jul18 <- clean(jul18)
+aug18 <- clean(aug18)
+sep18 <- clean(sep18)
+oct18 <- clean(oct18)
+nov18 <- clean(nov18)
+dec18 <- clean(dec18)
+# Issues with following datasets
+jan19 <- clean(jan19)
+feb19 <- clean(feb19)
+mar19 <- clean(mar19)
+###############
 
-my_zip_plot(li_data_smry, unique(li_data_smry$join_date), unique(li_data_smry$mapid))
-df$amenities
-str(df)
 
+data <- bind_rows(jan18,feb18,mar18,apr18,may18,jun18,jul18,aug18,sep18,oct18,nov18,dec18)
+str(data)
+write.csv(data, file = "final_data.csv")

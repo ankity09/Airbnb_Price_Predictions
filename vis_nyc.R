@@ -35,6 +35,9 @@ library(data.table)
 library(tidyverse)
 library(R.utils)
 
+df <- data
+
+str(df)
 
 leaflet(df) %>%
   addTiles() %>%
@@ -92,6 +95,8 @@ ggplot(propertyratio, aes(x=neighbourhood_group_cleansed, y=ratio, fill = proper
   xlab("Neighborhood") + ylab("Percentage")
 
 
+
+# Still Working on this
 nyc_map <- get_map(c(left = -74.194098, bottom = 40.538857, right = -73.762397, top = 40.888809), maptype = "toner-lite")
 ggmap(nyc_map)
 
