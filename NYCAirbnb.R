@@ -56,6 +56,8 @@ data <- data.frame("Names" = c('jan18','feb18','mar18','apr18'))
 framenames <- c('jan18','feb18','mar18','apr18')
 #framenames <- c('jan18','feb18','mar18','apr18','may18','jun18','jul18','aug18','sep18','oct18','nov18','dec18','jan19','feb19','mar19')
 
+df$is_business_travel_ready <- factor(df$is_business_travel_ready)
+
 
 ### removing dollar and comma ###
 clean <- function(x){
@@ -106,10 +108,11 @@ clean <- function(x){
     df$cancellation_policy <- as.factor(df$cancellation_policy)
     df$require_guest_phone_verification <- as.numeric(factor(df$require_guest_phone_verification, levels = c("f","t"))) - 1
     df$require_guest_phone_verification <- as.factor(df$require_guest_phone_verification)
-    df$is_business_travel_ready <- as.numeric(factor(df$is_business_travel_ready, levels = c("f","t"))) - 1
     df$is_business_travel_ready <- as.factor(df$is_business_travel_ready)
+    df$is_business_travel_ready <- as.numeric(factor(df$is_business_travel_ready, levels = c("f","t"))) - 1
     df$instant_bookable <- as.numeric(factor(df$instant_bookable, levels = c("f","t"))) - 1
     df$instant_bookable <- as.factor(df$instant_bookable)
+    df$cancellation_policy <- factor(df$cancellation_policy)
     x <- df
 }
 
@@ -130,8 +133,14 @@ jan19 <- clean(jan19)
 feb19 <- clean(feb19)
 mar19 <- clean(mar19)
 ###############
+str(jan18)
 
 
 data <- bind_rows(jan18,feb18,mar18,apr18,may18,jun18,jul18,aug18,sep18,oct18,nov18,dec18)
 str(data)
 write.csv(data, file = "final_data.csv")
+
+
+
+
+linear <- lm(price ~., data = data)
