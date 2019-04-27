@@ -14,6 +14,7 @@ install.packages("zipcode")
 install.packages("leaflet")
 install.packages("extracat")
 install.packages("gridExtra")
+install.packages("sparklyr")
 
 library(devtools)
 #install_github('arilamstein/choroplethrZip@v1.5.0')
@@ -34,6 +35,9 @@ library(gridExtra)
 library(data.table)
 library(tidyverse)
 library(R.utils)
+library(glmnet)
+library(sparklyr)
+library(sentimentr)
 ### Data Import
 
 jan18 <- read.csv("/Users/ankityadav/Desktop/Spring_2019/DMPA/Project/Data/January_2018/listings.csv", stringsAsFactors = F)
@@ -62,7 +66,14 @@ df$is_business_travel_ready <- factor(df$is_business_travel_ready)
 ### removing dollar and comma ###
 clean <- function(x){
     df <- x
-    df <- df[,c(1,5,22:23,26:29,32:35,37,39:42,44,49:69,71:75,77,80:86,90:92,94:96)]  
+    df$amenities <- as.character(df$amenities)
+    df <- df %>% mutate(total_amenties= ifelse(nchar(amenities)>2, str_count(amenities, ',')+1, 0))
+    df <- df %>% select("id" ,"host_name" ,"host_since" ,"host_response_time" ,"host_response_rate" ,"host_is_superhost" ,"host_neighbourhood" ,"host_listings_count" ,"host_total_listings_count" ,"host_identity_verified" ,
+                        "neighbourhood" ,"neighbourhood_cleansed","neighbourhood_group_cleansed" ,"city" ,"zipcode" ,"latitude" ,"longitude" ,"is_location_exact" ,"property_type" ,"room_type" ,"accommodates" ,"bathrooms" ,"bedrooms" ,
+                        "beds" ,"bed_type" ,"price" ,"security_deposit" ,"cleaning_fee" ,"guests_included" ,"extra_people" ,"minimum_nights" ,"maximum_nights" ,"availability_30" ,"availability_60" ,"availability_90","availability_365" ,
+                        "number_of_reviews" ,"review_scores_rating" ,"review_scores_accuracy" ,"review_scores_cleanliness" ,"review_scores_checkin" ,"review_scores_communication" ,"review_scores_location" ,"review_scores_value" ,
+                        "instant_bookable" ,"is_business_travel_ready" ,"cancellation_policy" ,"require_guest_phone_verification" ,"calculated_host_listings_count" ,"reviews_per_month", "total_amenities")
+    df$host_name <- as.character(df$host_name)
     df$extra_people <- as.numeric(gsub("\\$", "", df$extra_people))
     df$price <- gsub("\\$", "", df$price)
     df$price <- as.numeric(gsub(",","",df$price))
@@ -75,23 +86,18 @@ clean <- function(x){
     df$host_response_rate <- gsub("\\%", "", df$host_response_rate)
     df$host_response_rate <- as.numeric(df$host_response_rate)
     df$host_is_superhost <- as.numeric(factor(df$host_is_superhost, levels = c("f","t"))) - 1
+    df$host_is_superhost <- ifelse(is.na(df$host_is_superhost), 0, df$host_is_superhost)
     df$host_identity_verified <- as.numeric(factor(df$host_identity_verified, levels = c("f","t"))) - 1
     df$neighbourhood_group <- factor(df$neighbourhood_group)
     df$neighbourhood_group_cleansed <- factor(df$neighbourhood_group_cleansed)
     df$room_type <- factor(df$room_type)
     df$host_response_time <- factor(df$host_response_time, levels = c("N/A","within an hour", "within a few hours", "within a day","a few days or more"))
-    df$has_availability <- as.numeric(factor(df$has_availability)) 
     df$property_type <- factor(df$property_type)
     df$bed_type <- factor(df$bed_type)
-    df$weekly_price <- gsub("\\$", "", df$weekly_price)
-    df$weekly_price <- as.numeric(gsub(",","",df$weekly_price))
-    df$monthly_price <- gsub("\\$", "", df$monthly_price)
-    df$monthly_price <- as.numeric(gsub(",","",df$monthly_price))
     df$minimum_nights <- as.numeric(df$minimum_nights)
     df$maximum_nights <- as.numeric(df$maximum_nights)
     df$neighbourhood <- factor(df$neighbourhood)
     df$neighbourhood_cleansed <- factor(df$neighbourhood_cleansed)
-    df$host_verifications <- factor(df$host_verifications)
     df$zipcode <- factor(df$zipcode)
     df$host_neighbourhood <- factor(df$host_neighbourhood)
     df$host_since <- as.Date(df$host_since)
@@ -115,6 +121,7 @@ clean <- function(x){
     df$cancellation_policy <- factor(df$cancellation_policy)
     x <- df
 }
+nrow(apr18)
 
 jan18 <- clean(jan18)
 feb18 <- clean(feb18)
@@ -137,10 +144,7 @@ str(jan18)
 
 
 data <- bind_rows(jan18,feb18,mar18,apr18,may18,jun18,jul18,aug18,sep18,oct18,nov18,dec18)
-str(data)
+str(apr18)
 write.csv(data, file = "final_data.csv")
 
 
-
-
-linear <- lm(price ~., data = data)
