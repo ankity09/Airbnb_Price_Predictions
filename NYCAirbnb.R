@@ -38,7 +38,6 @@ library(choroplethrZip)
 library(GGally)
 library(lubridate)
 library(zoo)
-library(scales)
 library(ggmap)
 library(scales)
 library(stringr)
@@ -167,13 +166,11 @@ pred.clean <- function(x)
   df <- x
   df$amenities <- as.character(df$amenities)
   df <- df %>% mutate(total_amenities= ifelse(nchar(amenities)>2, str_count(amenities, ',')+1, 0))
-  df <- df %>% select("id" ,"host_name" ,"host_since" ,"host_response_time","host_is_superhost" ,"host_neighbourhood" ,"host_identity_verified" ,
-                      "neighbourhood_group_cleansed" ,"city" ,"zipcode" ,"latitude" ,"longitude" ,"is_location_exact" ,"property_type" ,"room_type" ,"accommodates" ,"bathrooms" ,"bedrooms" ,
-                      "beds" ,"bed_type" ,"price" ,"security_deposit" ,"cleaning_fee" ,"guests_included" ,"extra_people" ,"minimum_nights" ,"maximum_nights" ,"availability_30" ,
+  df <- df %>% select("id","host_is_superhost" ,"host_response_time",
+                      "neighbourhood_group_cleansed","is_location_exact" ,"property_type" ,"room_type" ,"accommodates" ,"bathrooms" ,"bedrooms" ,
+                      "price" ,"security_deposit" ,"cleaning_fee" ,"guests_included" ,"extra_people"  ,"availability_30" ,
                       "number_of_reviews" ,"review_scores_rating" ,"review_scores_accuracy" ,"review_scores_cleanliness" ,"review_scores_checkin" ,"review_scores_communication" ,"review_scores_location" ,"review_scores_value" ,
-                      "instant_bookable" ,"is_business_travel_ready" ,"cancellation_policy" ,"require_guest_phone_verification" , "total_amenities")
-  df$host_name <- as.character(df$host_name)
-  df$extra_people <- as.numeric(gsub("\\$", "", df$extra_people))
+                      "cancellation_policy" , "total_amenities")
   df$price <- gsub("\\$", "", df$price)
   df$price <- as.numeric(gsub(",","",df$price))
   df$security_deposit <- gsub("\\$", "", df$security_deposit)
@@ -182,7 +179,6 @@ pred.clean <- function(x)
   df$cleaning_fee <- gsub("\\$", "", df$cleaning_fee)
   df$cleaning_fee <- as.numeric(gsub(",","",df$cleaning_fee))
   df$cleaning_fee <- ifelse(is.na(df$cleaning_fee), 0, df$cleaning_fee)
-  df$beds <- ifelse(is.na(df$beds), mean(df$beds,na.rm=TRUE), df$beds)
   df$bedrooms <- ifelse(is.na(df$bedrooms), mean(df$bedrooms,na.rm=TRUE), df$bedrooms)
   df$bathrooms <- ifelse(is.na(df$bathrooms), mean(df$bathrooms,na.rm=TRUE), df$bathrooms)
   df$review_scores_rating <- ifelse(is.na(df$review_scores_rating), mean(df$review_scores_rating,na.rm=TRUE), df$review_scores_rating)
@@ -194,33 +190,17 @@ pred.clean <- function(x)
   df$review_scores_value <- ifelse(is.na(df$review_scores_value), mean(df$review_scores_value,na.rm=TRUE), df$review_scores_value)
   df$host_is_superhost <- as.numeric(factor(df$host_is_superhost, levels = c("f","t"))) - 1
   df$host_is_superhost <- ifelse(is.na(df$host_is_superhost), 0, df$host_is_superhost)
-  df$host_identity_verified <- as.numeric(factor(df$host_identity_verified, levels = c("f","t"))) - 1
-  df$host_identity_verified <- ifelse(is.na(df$host_identity_verified), 0, df$host_identity_verified)
-  df$neighbourhood_group <- factor(df$neighbourhood_group)
   df$neighbourhood_group_cleansed <- factor(df$neighbourhood_group_cleansed)
   df$room_type <- factor(df$room_type)
   df$host_response_time <- factor(df$host_response_time, levels = c("N/A","within an hour", "within a few hours", "within a day","a few days or more"))
   df$property_type <- factor(df$property_type)
-  df$bed_type <- factor(df$bed_type)
-  df$minimum_nights <- as.numeric(df$minimum_nights)
-  df$maximum_nights <- as.numeric(df$maximum_nights)
-  df$zipcode <- factor(df$zipcode)
-  df$host_neighbourhood <- factor(df$host_neighbourhood)
-  df$host_since <- as.Date(df$host_since)
   df$accommodates <- as.numeric(df$accommodates)
   df$bathrooms <- as.numeric(df$bathrooms)
   df$bedrooms <- as.numeric(df$bedrooms)
-  df$beds <- as.numeric(df$beds)
   df$guests_included <- as.numeric(df$guests_included)
   df$is_location_exact <- as.numeric(factor(df$is_location_exact, levels = c("f","t"))) - 1
   df$is_location_exact <- as.factor(df$is_location_exact)
   df$cancellation_policy <- as.factor(df$cancellation_policy)
-  df$require_guest_phone_verification <- as.numeric(factor(df$require_guest_phone_verification, levels = c("f","t"))) - 1
-  df$require_guest_phone_verification <- as.factor(df$require_guest_phone_verification)
-  df$is_business_travel_ready <- as.factor(df$is_business_travel_ready)
-  df$is_business_travel_ready <- as.numeric(factor(df$is_business_travel_ready, levels = c("f","t"))) - 1
-  df$instant_bookable <- as.numeric(factor(df$instant_bookable, levels = c("f","t"))) - 1
-  df$instant_bookable <- as.factor(df$instant_bookable)
   df$cancellation_policy <- factor(df$cancellation_policy)
   df$property_type <- as.factor(df$property_type)
   x <- df
