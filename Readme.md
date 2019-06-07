@@ -44,7 +44,11 @@ Scanning sentiments of ~38000 reviews took about an hour on our machines.)*
 **To view model summaries, view the dataframe "modelkpi".**
 
 
-## Model Summaries
+## Result & Model Summaries
+
+We discovered that cancellation policy, host response time, property type, cleaning fee security deposit, review ratings, 
+total amenities and sentiment score have the most influence on prices. We conclude that on average, our models under predict houses by about $50. Results have been summarized and tabulated below:
+
 | Model | RMSE | MAE | MAPE | AE | Adjusted R-Squared |
 |---|---|---|---|---|---|
 | Linear Regression | 126.45 | 59.34 | 47.88 | -1.44 | 0.3630 |
