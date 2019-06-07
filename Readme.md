@@ -42,3 +42,14 @@ Scanning sentiments of ~38000 reviews took about an hour on our machines.)*
 8. Once run, view plots generated in the plot window.
 	  
 **To view model summaries, view the dataframe "modelkpi".**
+
+
+## Model Summaries
+| Model | RMSE | MAE | MAPE | AE | Adjusted R-Squared |
+|---|---|---|---|---|---|
+| Linear Regression | 126.45 | 59.34 | 47.88 | -1.44 | 0.3630 |
+| XGBoost | 126.46 | 59.33 | 47.81 | -17.43 | 0.3860 |
+| **Linear Regression Logged**  | **126.76** | **50.51** | **32.15** | **-1.42** | **0.6248** :trophy:|
+| XGBoost Logged | 126.75 | 50.54 | 32.20 | -17.53 | 0.4150 |
+| Lasso Regression | 126.41 | 59.25 | 47.74 | -1.40 |0.3860 |
+| Neural Net Keras | 159.83 | 86.10 | 84.70 | -3.3- |   |
