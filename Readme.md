@@ -56,4 +56,4 @@ total amenities and sentiment score have the most influence on prices. We conclu
 | **Linear Regression Logged**  | **126.76** | **50.51** | **32.15** | **-1.42** | **0.6248** :trophy:|
 | XGBoost Logged | 126.75 | 50.54 | 32.20 | -17.53 | 0.4150 |
 | Lasso Regression | 126.41 | 59.25 | 47.74 | -1.40 |0.3860 |
-| Neural Net Keras | 159.83 | 86.10 | 84.70 | -3.3- |   |
+| Neural Net Keras | 159.83 | 86.10 | 84.70 | -3.3 | - |
